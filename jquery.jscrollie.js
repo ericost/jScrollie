@@ -29,16 +29,18 @@
   };
 
 
-
   var methods = {
 
     _init: function() {
-      barWidth = barWidth || getBarWidth();
-
+        var self = this;
+        barWidth = barWidth || getBarWidth();
+        
+        
       return this.each(function() {
         var $this = $(this);
+        
         var data = $this.data('scrollbarPaper');
-
+        
         if (!data) {
 
           // Initialize the scrollbarPaper.
@@ -59,17 +61,17 @@
 
           var state = getState($this);
           var setTimeout = function() {
-            TC.home.cache.scrollbartimeout = window.setTimeout(function() {
-              var newState = getState($this);
-              if ((newState.height != state.height)
-               || (newState.ratio  != state.ratio)
-               || (newState.offset.left != state.offset.left)
-               || (newState.offset.top  != state.offset.top)) {
-                $this.scrollbarPaper('update');
-                state = newState;
-              }
-              setTimeout();
-            }, 200);
+             self.interval = window.setTimeout(function() {
+                        var newState = getState($this);
+                        if ((newState.height != state.height)
+                        || (newState.ratio  != state.ratio)
+                        || (newState.offset.left != state.offset.left)
+                        || (newState.offset.top  != state.offset.top)) {
+                                $this.scrollbarPaper('update');
+                                state = newState;
+                        }
+                        setTimeout();               
+           }, 200);
           };
           setTimeout();
 
@@ -77,7 +79,9 @@
         $this.scrollbarPaper('update');
       });
     },
-
+    destroy : function(){
+        clearInterval(this.interval);
+    },
     update: function() {
       return this.each(function() {
         var $this = $(this);
@@ -142,7 +146,7 @@
 
 
   $.fn.scrollbarPaper = function(method) {
-
+        //var interval;
     if (methods[method]) {
       return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
     }
